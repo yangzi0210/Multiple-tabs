@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useMatchRoute } from './useMatchRoute';
 import { history } from '@umijs/max';
+
 export interface MultiTab {
   title: string;
   routePath: string;
@@ -19,6 +20,7 @@ export const useMultiTabs = () => {
   const [activeTabRoutePath, setActiveTabRoutePath] = useState<string>('');
 
   const matchRoute = useMatchRoute();
+  // 删除当前
   const closeTab = useCallback(
     (routePath: string = activeTabRoutePath) => {
       const index = activeTabs.findIndex((item) => item.routePath === routePath);
@@ -34,13 +36,14 @@ export const useMultiTabs = () => {
     },
     [activeTabRoutePath],
   );
-
+  // 删除其他
   const closeOtherTab = useCallback(
     (routePath: string = activeTabRoutePath) => {
       setActiveTabs((prev) => prev.filter((o) => o.routePath === routePath));
     },
     [activeTabRoutePath],
   );
+  // 刷新
   const refreshTab = useCallback(
     (routePath: string = activeTabRoutePath) => {
       setActiveTabs((prev) => {
@@ -57,6 +60,7 @@ export const useMultiTabs = () => {
 
   useEffect(() => {
     if (!matchRoute) return;
+
     const existActiveTabs = activeTabs.find((item) => item.routePath === matchRoute.routePath);
 
     if (!existActiveTabs) {

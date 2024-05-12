@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { history } from '@umijs/max';
 import { MultiTab, useMultiTabs } from './useMultiTabs';
 import { MenuInfo } from 'rc-menu/lib/interface';
+import { MultiTabContext } from './context';
 
 enum OperationType {
   REFRESH = 'refresh',
@@ -16,7 +17,8 @@ type MenuItem = {
 };
 
 type MenuItemType = MenuItem | null;
-const KeepAliveLayout = () => {
+
+const MultiTabLayout = () => {
   const { activeTabs, activeTabRoutePath, closeTab, refreshTab, closeOtherTab } = useMultiTabs();
 
   const menuItems: MenuItemType[] = useMemo(
@@ -101,17 +103,28 @@ const KeepAliveLayout = () => {
     history.push(tabRoutePath);
   }, []);
 
+  const multiTabContextValue = useMemo(
+    () => ({
+      closeTab,
+      closeOtherTab,
+      refreshTab,
+    }),
+    [closeTab, closeOtherTab, refreshTab],
+  );
+
   return (
-    <Tabs
-      type="editable-card"
-      items={tabItems}
-      activeKey={activeTabRoutePath}
-      onChange={onTabsChange}
-      className="keep-alive-tabs"
-      hideAdd
-      onEdit={onTabEdit}
-    />
+    <MultiTabContext.Provider value={multiTabContextValue}>
+      <Tabs
+        type="editable-card"
+        items={tabItems}
+        activeKey={activeTabRoutePath}
+        onChange={onTabsChange}
+        className="keep-alive-tabs"
+        hideAdd
+        onEdit={onTabEdit}
+      />
+    </MultiTabContext.Provider>
   );
 };
 
-export default KeepAliveLayout;
+export default MultiTabLayout;

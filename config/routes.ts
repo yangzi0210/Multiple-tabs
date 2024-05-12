@@ -46,6 +46,12 @@ export default [
     ],
   },
   {
+    path: '/test',
+    name: 'test',
+    icon: 'AlertOutlined',
+    component: './Test',
+  },
+  {
     name: 'list.table-list',
     icon: 'table',
     path: '/list',
