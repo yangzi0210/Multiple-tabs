@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useMatchRoute } from './useMatchRoute';
-
+import { history } from '@umijs/max';
 export interface MultiTab {
   title: string;
   routePath: string;
@@ -19,6 +19,41 @@ export const useMultiTabs = () => {
   const [activeTabRoutePath, setActiveTabRoutePath] = useState<string>('');
 
   const matchRoute = useMatchRoute();
+  const closeTab = useCallback(
+    (routePath: string = activeTabRoutePath) => {
+      const index = activeTabs.findIndex((item) => item.routePath === routePath);
+      if (activeTabs[index].routePath === activeTabRoutePath) {
+        if (index > 0) {
+          history.push(activeTabs[index - 1].routePath);
+        } else {
+          history.push(activeTabs[index + 1].routePath);
+        }
+      }
+      activeTabs.splice(index, 1);
+      setActiveTabs([...activeTabs]);
+    },
+    [activeTabRoutePath],
+  );
+
+  const closeOtherTab = useCallback(
+    (routePath: string = activeTabRoutePath) => {
+      setActiveTabs((prev) => prev.filter((o) => o.routePath === routePath));
+    },
+    [activeTabRoutePath],
+  );
+  const refreshTab = useCallback(
+    (routePath: string = activeTabRoutePath) => {
+      setActiveTabs((prev) => {
+        const index = prev.findIndex((tab) => tab.routePath === routePath);
+        if (index >= 0) {
+          // 根据react的特性，key变了，组件会卸载重新渲染
+          prev[index].key = generateKey();
+        }
+        return [...prev];
+      });
+    },
+    [activeTabRoutePath],
+  );
 
   useEffect(() => {
     if (!matchRoute) return;
@@ -39,7 +74,7 @@ export const useMultiTabs = () => {
     }
     setActiveTabRoutePath(matchRoute.routePath);
   }, [matchRoute]);
-  return { activeTabs, activeTabRoutePath };
+  return { closeTab, refreshTab, closeOtherTab, activeTabs, activeTabRoutePath };
 };
 
 export default useMultiTabs;
