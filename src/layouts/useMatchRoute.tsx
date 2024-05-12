@@ -1,5 +1,4 @@
 import {
-  IRoute,
   history,
   useAppData,
   useIntl,
@@ -7,11 +6,7 @@ import {
   useOutlet,
   useSelectedRoutes,
 } from '@umijs/max';
-import { useEffect, useState } from 'react';
-
-type CustomIRoute = IRoute & {
-  name: string;
-};
+import { useCallback, useEffect, useState } from 'react';
 
 interface MatchRouteType {
   title: string;
@@ -28,23 +23,27 @@ export const useMatchRoute = () => {
   const { pathname } = useLocation();
   const { formatMessage } = useIntl();
   const [matchRoute, setMatchRoute] = useState<MatchRouteType | undefined>();
-  console.log(seletedRoutes, 'seletedRoutes');
-  const getMenuTitle = (lastRoute: any) => {
-    let curRoute = lastRoute.route;
-    let names = ['menu'];
-    while (curRoute.parentId && !curRoute.isLayout) {
-      if ((routes[curRoute.parentId] as CustomIRoute).name) {
-        names.push((routes[curRoute.parentId] as CustomIRoute).name);
-      } else {
-        break;
+
+  const getMenuTitle = useCallback(
+    (lastRoute: any) => {
+      let curRoute = lastRoute.route;
+      const names = ['menu'];
+      while (curRoute.parentId && !curRoute.isLayout) {
+        const parentRoute = routes[curRoute.parentId];
+        if (parentRoute?.name) {
+          names.push(parentRoute.name);
+        } else {
+          break;
+        }
+        curRoute = parentRoute;
       }
-      curRoute = routes[curRoute.parentId];
-    }
 
-    names.push(lastRoute.route.name);
+      names.push(lastRoute.route.name);
 
-    return formatMessage({ id: names.join('.') });
-  };
+      return formatMessage({ id: names.join('.') });
+    },
+    [routes],
+  );
 
   useEffect(() => {
     const lastRoute = seletedRoutes.at(-1);
