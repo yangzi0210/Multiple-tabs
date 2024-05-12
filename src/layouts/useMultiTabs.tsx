@@ -19,11 +19,11 @@ export const useMultiTabs = () => {
   const [activeTabRoutePath, setActiveTabRoutePath] = useState<string>('');
 
   const matchRoute = useMatchRoute();
-  console.log(matchRoute, 'matchRoute');
+
   useEffect(() => {
     if (!matchRoute) return;
     const existActiveTabs = activeTabs.find((item) => item.routePath === matchRoute.routePath);
-    console.log(existActiveTabs, 'existActiveTabs');
+
     if (!existActiveTabs) {
       setActiveTabs((prev) => [
         ...prev,
