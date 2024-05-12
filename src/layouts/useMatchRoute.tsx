@@ -1,4 +1,5 @@
 import {
+  IRoute,
   history,
   useAppData,
   useIntl,
@@ -16,6 +17,10 @@ interface MatchRouteType {
   icon?: any;
 }
 
+type CustomRoute = IRoute & {
+  name: string;
+};
+
 export const useMatchRoute = () => {
   const seletedRoutes = useSelectedRoutes();
   const children = useOutlet();
@@ -29,7 +34,7 @@ export const useMatchRoute = () => {
       let curRoute = lastRoute.route;
       const names = ['menu'];
       while (curRoute.parentId && !curRoute.isLayout) {
-        const parentRoute = routes[curRoute.parentId];
+        const parentRoute = routes[curRoute.parentId] as CustomRoute;
         if (parentRoute?.name) {
           names.push(parentRoute.name);
         } else {
