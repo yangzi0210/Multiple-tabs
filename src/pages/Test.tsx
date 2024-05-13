@@ -1,13 +1,30 @@
 import { MultiTabContext } from '@/layouts/context';
 import { PageContainer } from '@ant-design/pro-components';
-import { Button, Input, Space } from 'antd';
-import React, { useContext } from 'react';
+import { Button, Input, Space, notification } from 'antd';
+import { useContext, useEffect } from 'react';
 
 const Test: React.FC = () => {
-  const { closeTab, closeOtherTab, refreshTab } = useContext(MultiTabContext);
+  const { closeTab, closeOtherTab, refreshTab, onHidden, onShow } = useContext(MultiTabContext);
+  const [api, contextHolder] = notification.useNotification();
+
+  useEffect(() => {
+    onHidden(() => {
+      api.open({
+        message: 'onHidden event',
+        description: 'onHidden.',
+      });
+    });
+    onShow(() => {
+      api.open({
+        message: 'onShow event',
+        description: 'onShow.',
+      });
+    });
+  }, []);
 
   return (
     <PageContainer>
+      {contextHolder}
       <Space>
         <Input />
         <Button

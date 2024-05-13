@@ -19,7 +19,8 @@ type MenuItem = {
 type MenuItemType = MenuItem | null;
 
 const MultiTabLayout = () => {
-  const { activeTabs, activeTabRoutePath, closeTab, refreshTab, closeOtherTab } = useMultiTabs();
+  const { activeTabs, activeTabRoutePath, onShow, onHidden, closeTab, refreshTab, closeOtherTab } =
+    useMultiTabs();
 
   const menuItems: MenuItemType[] = useMemo(
     () =>
@@ -108,6 +109,8 @@ const MultiTabLayout = () => {
       closeTab,
       closeOtherTab,
       refreshTab,
+      onShow,
+      onHidden,
     }),
     [closeTab, closeOtherTab, refreshTab],
   );
